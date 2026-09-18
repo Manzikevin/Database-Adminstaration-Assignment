@@ -1,4 +1,10 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 require_once 'config.php';
 
 // Fetch Relational Views
@@ -14,12 +20,28 @@ $schedules = $pdo->query("SELECT cl.class_id, cl.semester, co.course_code, co.co
 
 $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status, 
                                     CONCAT(s.first_name, ' ', s.last_name) AS student_name, s.email, 
-                                    co.course_code, co.course_title, cl.semester 
+                                    co.course_code, co.course_title, cl.semester,
+                                    g.numeric_score, g.letter_grade
                              FROM enrollments e 
                              JOIN students s ON e.student_id = s.student_id 
                              JOIN classes cl ON e.class_id = cl.class_id 
                              JOIN courses co ON cl.course_id = co.course_id 
+                             LEFT JOIN grades g ON e.enrollment_id = g.enrollment_id
                              ORDER BY e.enrollment_id DESC")->fetchAll();
+
+try {
+    $grades = $pdo->query("SELECT g.grade_id, g.numeric_score, g.letter_grade, 
+                                  CONCAT(s.first_name, ' ', s.last_name) AS student_name, s.email, 
+                                  co.course_code, co.course_title, cl.semester 
+                           FROM grades g 
+                           JOIN enrollments e ON g.enrollment_id = e.enrollment_id 
+                           JOIN students s ON e.student_id = s.student_id 
+                           JOIN classes cl ON e.class_id = cl.class_id 
+                           JOIN courses co ON cl.course_id = co.course_id 
+                           ORDER BY g.grade_id DESC")->fetchAll();
+} catch (PDOException $e) {
+    die("Query Error: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-50">
@@ -104,7 +126,7 @@ $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status,
                         Data Explorer
                     </span>
                 </div>
-                <p class="text-sm text-slate-500 mt-1">Unified access portal for student enrollments, scheduled class offerings, and course catalog views.</p>
+                <p class="text-sm text-slate-500 mt-1">Unified access portal for student enrollments, academic grades, scheduled class offerings, and course catalog views.</p>
             </div>
 
             <!-- Navigation Segmented Tabs -->
@@ -115,6 +137,15 @@ $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status,
                     <span>Enrollments</span>
                     <span :class="tab === 'enrollments' ? 'bg-blue-100 text-blue-900' : 'bg-slate-300/70 text-slate-700'" class="px-2 py-0.5 rounded-full text-[11px] font-bold">
                         <?= count($enrollments); ?>
+                    </span>
+                </button>
+
+                <button @click="tab = 'grades'"
+                    :class="tab === 'grades' ? 'bg-white text-purple-950 shadow-sm border border-slate-200/80' : 'text-slate-600 hover:text-slate-900'"
+                    class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg transition duration-150 focus:outline-none">
+                    <span>Student Grades</span>
+                    <span :class="tab === 'grades' ? 'bg-purple-100 text-purple-900' : 'bg-slate-300/70 text-slate-700'" class="px-2 py-0.5 rounded-full text-[11px] font-bold">
+                        <?= count($grades); ?>
                     </span>
                 </button>
 
@@ -148,8 +179,8 @@ $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status,
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-base font-semibold text-slate-900">Active Student Enrollments</h2>
-                        <p class="text-xs text-slate-500">Live student registrations linked to scheduled course sections.</p>
+                        <h2 class="text-base font-semibold text-slate-900">Active Student Enrollments & Evaluation Status</h2>
+                        <p class="text-xs text-slate-500">Live student registrations linked to scheduled course sections and recorded marks.</p>
                     </div>
                 </div>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">
@@ -165,6 +196,7 @@ $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status,
                             <th class="py-3.5 px-6">Email Address</th>
                             <th class="py-3.5 px-6">Enrolled Course</th>
                             <th class="py-3.5 px-6">Semester</th>
+                            <th class="py-3.5 px-6">Grade</th>
                             <th class="py-3.5 px-6">Status</th>
                         </tr>
                     </thead>
@@ -186,6 +218,16 @@ $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status,
                                         <?= htmlspecialchars($e['semester']); ?>
                                     </td>
                                     <td class="py-3.5 px-6">
+                                        <?php if ($e['letter_grade']): ?>
+                                            <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded border text-xs font-bold bg-purple-50 text-purple-900 border-purple-200">
+                                                <span><?= htmlspecialchars($e['letter_grade']); ?></span>
+                                                <span class="text-[10px] text-purple-600 font-normal">(<?= htmlspecialchars($e['numeric_score']); ?>%)</span>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="text-xs text-slate-400 italic">Pending</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="py-3.5 px-6">
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200/60">
                                             <?= htmlspecialchars($e['enroll_status']); ?>
                                         </span>
@@ -194,11 +236,84 @@ $enrollments = $pdo->query("SELECT e.enrollment_id, e.enroll_status,
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="py-12 px-6 text-center text-slate-400">
+                                <td colspan="6" class="py-12 px-6 text-center text-slate-400">
                                     <svg class="w-10 h-10 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                     </svg>
                                     <p class="text-sm font-medium text-slate-500">No student enrollment records found.</p>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Student Grades Tab -->
+        <div x-show="tab === 'grades'" x-cloak class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+            <div class="p-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-700 shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-semibold text-slate-900">Student Academic Grades</h2>
+                        <p class="text-xs text-slate-500">Official recorded grades and percentage marks per course enrollment.</p>
+                    </div>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-50 text-purple-800 border border-purple-200/60">
+                    Total Graded: <?= count($grades); ?>
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                            <th class="py-3.5 px-6">Student Name</th>
+                            <th class="py-3.5 px-6">Email Address</th>
+                            <th class="py-3.5 px-6">Course</th>
+                            <th class="py-3.5 px-6">Semester</th>
+                            <th class="py-3.5 px-6">Numeric numeric_score</th>
+                            <th class="py-3.5 px-6">Letter Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <?php if (!empty($grades)): ?>
+                            <?php foreach ($grades as $g): ?>
+                                <tr class="hover:bg-slate-50/70 transition duration-150">
+                                    <td class="py-3.5 px-6 font-semibold text-slate-900">
+                                        <?= htmlspecialchars($g['student_name']); ?>
+                                    </td>
+                                    <td class="py-3.5 px-6 text-slate-600 font-mono text-xs">
+                                        <?= htmlspecialchars($g['email']); ?>
+                                    </td>
+                                    <td class="py-3.5 px-6 font-medium text-blue-950">
+                                        <span class="font-bold text-blue-900 me-1"><?= htmlspecialchars($g['course_code']); ?></span>
+                                        <span class="text-slate-600 font-normal">- <?= htmlspecialchars($g['course_title']); ?></span>
+                                    </td>
+                                    <td class="py-3.5 px-6 text-slate-600 text-xs font-medium">
+                                        <?= htmlspecialchars($g['semester']); ?>
+                                    </td>
+                                    <td class="py-3.5 px-6 font-semibold text-slate-800 text-xs">
+                                        <?= htmlspecialchars($g['numeric_score']); ?> / 100
+                                    </td>
+                                    <td class="py-3.5 px-6">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-bold bg-purple-100 text-purple-900 border border-purple-200">
+                                            <?= htmlspecialchars($g['letter_grade']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="py-12 px-6 text-center text-slate-400">
+                                    <svg class="w-10 h-10 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+                                    </svg>
+                                    <p class="text-sm font-medium text-slate-500">No student grade records recorded yet.</p>
                                 </td>
                             </tr>
                         <?php endif; ?>

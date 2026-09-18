@@ -6,6 +6,7 @@ $deptCount   = $pdo->query("SELECT COUNT(*) FROM departments")->fetchColumn();
 $courseCount = $pdo->query("SELECT COUNT(*) FROM courses")->fetchColumn();
 $classCount  = $pdo->query("SELECT COUNT(*) FROM classes")->fetchColumn();
 $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
+$gradeCount  = $pdo->query("SELECT COUNT(*) FROM grades")->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-50">
@@ -55,6 +56,9 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                 <a href="enroll_student.php" class="text-blue-100 hover:text-white hover:bg-blue-800/50 px-3 py-2 rounded-md transition">
                     Enroll Student
                 </a>
+                <a href="manage_grades.php" class="text-blue-100 hover:text-white hover:bg-blue-800/50 px-3 py-2 rounded-md transition">
+                    Manage Grades
+                </a>
             </nav>
 
             <!-- Mobile Menu Quick Button -->
@@ -78,7 +82,7 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                         System Online
                     </span>
                 </div>
-                <p class="text-sm text-slate-500 mt-1">Overview of institutional entities, active terms, and administration tasks.</p>
+                <p class="text-sm text-slate-500 mt-1">Overview of institutional entities, active terms, academic evaluations, and administration tasks.</p>
             </div>
 
             <!-- Quick Explorer Action -->
@@ -95,7 +99,7 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
         <!-- Live Metrics Bar -->
         <section aria-labelledby="metrics-heading">
             <h2 id="metrics-heading" class="sr-only">System Overview Metrics</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
 
                 <!-- Metric 1: Departments -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200/90 shadow-sm flex items-center justify-between">
@@ -153,6 +157,20 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                     </div>
                 </div>
 
+                <!-- Metric 5: Recorded Grades -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200/90 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Recorded Grades</span>
+                        <p class="text-3xl font-bold text-purple-900 mt-1"><?= htmlspecialchars($gradeCount); ?></p>
+                        <span class="text-[11px] text-slate-500 mt-1 block">Graded enrollments</span>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-center text-purple-800 shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+                        </svg>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -165,7 +183,7 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 <!-- Task Card 1: Catalog Processing -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 p-6 flex flex-col justify-between hover:border-blue-900/30 transition duration-150">
@@ -224,6 +242,25 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                     </a>
                 </div>
 
+                <!-- Task Card 4: Grade Evaluation -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 p-6 flex flex-col justify-between hover:border-purple-600/30 transition duration-150">
+                    <div>
+                        <div class="w-10 h-10 bg-purple-50 border border-purple-100 text-purple-800 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-semibold text-slate-900 mb-1">4. Grade Evaluation</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-6">Assign numeric scores and letter grades to student enrollments (<code class="text-slate-700 bg-slate-100 px-1 py-0.5 rounded">manage_grades.php</code>).</p>
+                    </div>
+                    <a href="manage_grades.php" class="w-full inline-flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg text-xs shadow-sm transition duration-150">
+                        <span>Manage Grades</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                </div>
+
             </div>
         </section>
 
@@ -234,7 +271,7 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                 <p class="text-xs text-slate-500">Manage foundational database records and inspect complete relational tables.</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 
                 <!-- Entity 1: Departments -->
                 <a href="manage_departments.php" class="bg-white p-4 rounded-xl border border-slate-200/90 shadow-sm hover:border-blue-900/40 hover:shadow-md transition duration-150 flex items-center justify-between group">
@@ -246,7 +283,7 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                         </div>
                         <span class="text-xs font-semibold text-slate-700 group-hover:text-blue-950 transition">Departments</span>
                     </div>
-                    <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md group-hover:bg-blue-100 group-hover:text-blue-900 transition">Manage &rarr;</span>
+                    <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2 rounded-md group-hover:bg-blue-100 group-hover:text-blue-900 transition">Manage &rarr;</span>
                 </a>
 
                 <!-- Entity 2: Instructors -->
@@ -257,9 +294,9 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <span class="text-xs font-semibold text-slate-700 group-hover:text-blue-950 transition">Faculty Instructors</span>
+                        <span class="text-xs font-semibold text-slate-700 group-hover:text-blue-950 transition">Faculty</span>
                     </div>
-                    <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md group-hover:bg-blue-100 group-hover:text-blue-900 transition">Manage &rarr;</span>
+                    <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2 rounded-md group-hover:bg-blue-100 group-hover:text-blue-900 transition">Manage &rarr;</span>
                 </a>
 
                 <!-- Entity 3: Classrooms -->
@@ -272,10 +309,23 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                         </div>
                         <span class="text-xs font-semibold text-slate-700 group-hover:text-blue-950 transition">Classrooms</span>
                     </div>
-                    <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md group-hover:bg-blue-100 group-hover:text-blue-900 transition">Manage &rarr;</span>
+                    <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2 rounded-md group-hover:bg-blue-100 group-hover:text-blue-900 transition">Manage &rarr;</span>
                 </a>
 
-                <!-- Entity 4: Data Explorer -->
+                <!-- Entity 4: Grades -->
+                <a href="manage_grades.php" class="bg-white p-4 rounded-xl border border-slate-200/90 shadow-sm hover:border-purple-600/40 hover:shadow-md transition duration-150 flex items-center justify-between group">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 group-hover:bg-purple-100 flex items-center justify-center transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+                            </svg>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-700 group-hover:text-purple-950 transition">Grades</span>
+                    </div>
+                    <span class="text-[11px] font-medium bg-purple-50 text-purple-800 px-2 rounded-md group-hover:bg-purple-100 transition">Manage &rarr;</span>
+                </a>
+
+                <!-- Entity 5: Data Explorer -->
                 <a href="view_records.php" class="bg-blue-50/70 p-4 rounded-xl border border-blue-200/80 shadow-sm hover:bg-blue-100/80 transition duration-150 flex items-center justify-between group">
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 rounded-lg bg-blue-900 text-white flex items-center justify-center transition">
@@ -283,9 +333,9 @@ $enrollCount = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <span class="text-xs font-semibold text-blue-950">Master Data Explorer</span>
+                        <span class="text-xs font-semibold text-blue-950">Explorer</span>
                     </div>
-                    <span class="text-[11px] font-semibold bg-blue-900 text-white px-2.5 py-1 rounded-md transition">View All &rarr;</span>
+                    <span class="text-[11px] font-semibold bg-blue-900 text-white px-2 py-1 rounded-md transition">View &rarr;</span>
                 </a>
 
             </div>
