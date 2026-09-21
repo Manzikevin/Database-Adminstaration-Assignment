@@ -56,7 +56,7 @@ $activeClasses = $pdo->query($sqlClasses)->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enroll Student - UNILAK SIMS</title>
+    <title>Enroll Student - HOPE SIMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -77,7 +77,7 @@ $activeClasses = $pdo->query($sqlClasses)->fetchAll();
                     </svg>
                 </div>
                 <div class="flex items-baseline space-x-2">
-                    <a href="index.php" class="text-lg font-bold tracking-tight text-white hover:text-blue-100 transition">UNILAK SIMS</a>
+                    <a href="index.php" class="text-lg font-bold tracking-tight text-white hover:text-blue-100 transition">HOPE SIMS</a>
                     <span class="hidden sm:inline-block text-xs text-blue-200 border-l border-blue-700/60 pl-2 font-normal">Academic Management System</span>
                 </div>
             </div>
@@ -185,7 +185,7 @@ $activeClasses = $pdo->query($sqlClasses)->fetchAll();
                             <label for="email" class="block text-sm font-medium text-slate-700 mb-1">
                                 Email Address <span class="text-red-500">*</span>
                             </label>
-                            <input type="email" id="email" name="email" required maxlength="100" placeholder="e.g. j.mugisha@unilak.ac.rw"
+                            <input type="email" id="email" name="email" required maxlength="100" placeholder="e.g. j.mugisha@HOPE.ac.rw"
                                 class="w-full h-11 px-4 border border-slate-300 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 text-sm transition duration-150">
                             <p class="mt-1.5 text-xs text-slate-500">Institutional or primary student email.</p>
                         </div>
@@ -259,7 +259,7 @@ $activeClasses = $pdo->query($sqlClasses)->fetchAll();
     <footer class="mt-auto py-6 border-t border-slate-200 bg-white text-slate-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs gap-2">
             <div class="flex items-center space-x-2">
-                <span class="font-semibold text-blue-950">UNILAK SIMS</span>
+                <span class="font-semibold text-blue-950">HOPE SIMS</span>
                 <span>&bull;</span>
                 <span>School Information Management System</span>
             </div>

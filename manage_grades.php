@@ -59,7 +59,7 @@ $enrollments = $pdo->query("
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Grades - UNILAK SIMS</title>
+    <title>Manage Grades - HOPE SIMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -80,7 +80,7 @@ $enrollments = $pdo->query("
                     </svg>
                 </div>
                 <div class="flex items-baseline space-x-2">
-                    <a href="index.php" class="text-lg font-bold tracking-tight text-white hover:text-blue-100 transition">UNILAK SIMS</a>
+                    <a href="index.php" class="text-lg font-bold tracking-tight text-white hover:text-blue-100 transition">HOPE SIMS</a>
                     <span class="hidden sm:inline-block text-xs text-blue-200 border-l border-blue-700/60 pl-2 font-normal">Academic Management System</span>
                 </div>
             </div>
@@ -258,7 +258,7 @@ $enrollments = $pdo->query("
     <footer class="mt-auto py-6 border-t border-slate-200 bg-white text-slate-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs gap-2">
             <div class="flex items-center space-x-2">
-                <span class="font-semibold text-blue-950">UNILAK SIMS</span>
+                <span class="font-semibold text-blue-950">HOPE SIMS</span>
                 <span>&bull;</span>
                 <span>School Information Management System</span>
             </div>
